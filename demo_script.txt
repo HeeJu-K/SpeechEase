@@ -1,0 +1,7 @@
+The 6th cohort of UW MS in Technology Innovation (MSTI) students arrived at the Steve Ballmer Building from around the world. The largest incoming cohort of students yet, Cohort 6 comprises 70 students from 8 countries and spanning a diverse range of undergraduate degrees. For the first time, the MSTI is more than 50% female!
+
+Over the three days of orientation, students participated in icebreakers, get-to-know-each other challenges, and the faculty and staff they will spend the next 18 months of the program learning alongside. Cohort 6 marks a change in the MSTI structure, with students now having the capability to pursue a summer internship before graduation. On day two, the group travelled to the UW campus for a tour, scavenger hunt, and dinner.
+
+
+The orientation culminated with an afternoon introduction to the GIX Prototyping Labs. First, Labs staff introduced the students to soldering. Students then put this new skill to practice on Labs staff custom-developed printed circuit boards. The circuit boards and controllers were used to build a remote-controlled car, complete with adjustable motor speeds and directional control. New students had two hours to build the circuit boards, design and construct a chassis, and modify the software to increase speed before the final out-and-back racecourse.
+
