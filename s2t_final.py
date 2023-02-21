@@ -23,8 +23,18 @@ stream = p.open(
 # the AssemblyAI endpoint we're going to hit
 URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
 
+
+keywords = ['Hi', 'raspberry pi', 'great']
+
 def process_speech(str):
-    print("in func", str)
+    str = str.split(' ')
+    
+    print("func print len", len(str))
+    if len(str) > 5:
+        str = str[4:]
+    print("func print len after cut", str, len(str))
+
+
 
 async def send_receive():
    print(f'Connecting websocket to url ${URL}')
@@ -67,7 +77,6 @@ async def send_receive():
                    break
                except Exception as e:
                    assert False, "Not a websocket 4008 error"
-               print("at the end", json.loads(result_str)['text'])
                process_speech(json.loads(result_str)['text'])
 
        send_result, receive_result = await asyncio.gather(send(), receive())
