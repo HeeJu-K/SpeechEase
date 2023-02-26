@@ -124,7 +124,7 @@ function Home() {
   //re-route
   let navigate = useNavigate();
   const handleSend = () => {
-    navigate('/Raspberry');
+    // navigate('/Raspberry');
     onSendKeyword()
   }
 
