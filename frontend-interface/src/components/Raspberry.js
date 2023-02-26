@@ -14,7 +14,8 @@ function Raspberry() {
     useEffect(() => {
         async function receiveKeywords() {
             await axios.get(
-                'http://127.0.0.1:5000/keywords',
+                // 'http://127.0.0.1:5000/keywords',
+                'http://164.92.178.243:5000/keywords',
             )
                 .then((res) => {
                     setKeywords(res.data["selectedKeywords"])

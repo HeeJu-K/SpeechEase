@@ -37,7 +37,8 @@ function Home() {
       // file.name
     );
     axios.post(
-      "http://127.0.0.1:5000/extract", formData
+      // "http://127.0.0.1:5000/extract", formData
+      "http://164.92.178.243:5000/extract", formData
     ).then(
       (response) => {
         console.log(response);
@@ -60,7 +61,8 @@ function Home() {
     let finalKeywords = convertKeywords(displayKeywords)
     console.log("converted keywords: ", finalKeywords)
     axios.post(
-        "http://127.0.0.1:5000/keywords", finalKeywords
+        // "http://127.0.0.1:5000/keywords", finalKeywords
+        "http://164.92.178.243/keywords", finalKeywords
       ).then(
         (response) => {
           console.log("send", response);

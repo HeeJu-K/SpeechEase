@@ -3,7 +3,8 @@ import websockets
 import asyncio
 import base64
 import json
-auth_key = ''
+import time
+auth_key = '92b43f81e45647aa9b3818623299e3df'
 
 FRAMES_PER_BUFFER = 3200
 FORMAT = pyaudio.paInt16
@@ -25,6 +26,25 @@ URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
 
 
 keywords = ['Hi', 'raspberry pi', 'great']
+
+start_time = time.time()
+str_list = []
+
+def speed_test(str):
+    global start_time, str_list
+    if str == '':
+        return
+    str = str.split(' ')
+    str_list.extend(str)
+    print(time.time() - start_time)
+    print(str_list)
+    if time.time() - start_time > 3: #每隔三秒
+        print("enter")
+        if len(str_list) > 5: #check一下是不是有5个词以上
+            print("too fast")
+        start_time = time.time()
+        str_list = []    
+    print("speed test")
 
 def process_speech(str):
     str = str.split(' ')
@@ -78,6 +98,7 @@ async def send_receive():
                except Exception as e:
                    assert False, "Not a websocket 4008 error"
                process_speech(json.loads(result_str)['text'])
+               speed_test(json.loads(result_str)['text'])   # yuqi speed test
 
        send_result, receive_result = await asyncio.gather(send(), receive())
     #    print
