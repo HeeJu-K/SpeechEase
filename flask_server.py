@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 import yake
+import json
 # import spacy
 
 app = Flask(__name__)
@@ -17,6 +18,7 @@ max_ngram_size = 3
 deduplication_thresold = 0.9
 deduplication_algo = 'seqm'
 windowSize = 1
+selected_keywords = {}
 
 # text = ""
 
@@ -51,9 +53,15 @@ def extract_key_words():
     extracted = extraction(50)
     return extracted
 
-@app.route("/keywords", methods=["POST"])
+@app.route("/keywords", methods=["GET", "POST"])
 def get_keywords():
-    numOfKeywords = request.form['numKeywords']
-    print("numOfKeywords", numOfKeywords)
-    extracted = extraction(numOfKeywords)
-    return extracted
+    global selected_keywords
+    if request.method == "GET" :
+        return json.dumps(selected_keywords)
+    elif request.method == "POST":
+        selected_keywords = request.json
+        print(selected_keywords)
+        print(selected_keywords['selectedKeywords'])
+        return "Done"
+    else:
+        return "nth"
