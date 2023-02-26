@@ -62,7 +62,7 @@ function Home() {
     console.log("converted keywords: ", finalKeywords)
     axios.post(
         // "http://127.0.0.1:5000/keywords", finalKeywords
-        "http://164.92.178.243/keywords", finalKeywords
+        "http://164.92.178.243:5000/keywords", finalKeywords
       ).then(
         (response) => {
           console.log("send", response);
@@ -118,27 +118,9 @@ function Home() {
     // ]
     // console.log("fullkw", eraseKw, "display Kw", eraseDkw)
     setNumKeywords(numKeywords - 1)
-    // setDisplayKeywords(eraseDkw)
-    // setKeywords(eraseKw)
+    
   }
-  // const onChangeSlider = (value) => {
-  //   setNumKeywords(value)
-  //   var data = new FormData();
-  //   data.append('numKeywords', value);
 
-  //   axios.post(
-  //     'http://127.0.0.1:5000/keywords', data
-  //   )
-  //     .then(
-  //       (response) => {
-  //       console.log(JSON.stringify(response.data));
-  //       setKeywords(response.data);
-
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
   //re-route
   let navigate = useNavigate();
   const handleSend = () => {
