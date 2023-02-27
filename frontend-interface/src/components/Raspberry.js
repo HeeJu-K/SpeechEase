@@ -19,6 +19,7 @@ function Raspberry() {
         ).then(
             (res) => {
                 console.log("refreshed keywords", res.data);
+                setKeywords(res.data)
             }
         )
             .catch(
