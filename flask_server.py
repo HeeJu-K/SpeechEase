@@ -19,6 +19,7 @@ deduplication_thresold = 0.9
 deduplication_algo = 'seqm'
 windowSize = 1
 selected_keywords = {}
+modified_keywords = {}
 
 # text = ""
 
@@ -68,9 +69,11 @@ def get_keywords():
 
 @app.route("/modify", methods=["GET", "POST"])
 def display_modified():
+    global modified_keywords
     if request.method == "GET":
-        return
+        return json.dumps(modified_keywords)
     elif request.method == "POST":
-        return
+        modified_keywords = request.json
+        return modified_keywords
     else:
         return
