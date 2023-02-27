@@ -52,15 +52,17 @@ function Home() {
   };
   const convertKeywords = (keywords) => {
     let tmp = [[]]
+    // console.log("in convert: ", keywords[1][0])
     keywords.map((keyword)=>{
-      tmp.push([[
+      tmp.push([
         keyword[0], 
         true,
         "volume",
         "first",
         "second",
-      ]])
+      ])
     })
+    console.log("in convert tmp", tmp)
     let object_tmp = { 
         "selectedKeywords": tmp
     }
