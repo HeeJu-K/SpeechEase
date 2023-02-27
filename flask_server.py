@@ -71,9 +71,11 @@ def get_keywords():
 def display_modified():
     global modified_keywords
     if request.method == "GET":
+        print("get modified keywords: ", modified_keywords)
         return json.dumps(modified_keywords)
     elif request.method == "POST":
         modified_keywords = request.json
+        print("post modified keywords: ", modified_keywords)
         return modified_keywords
     else:
         return
