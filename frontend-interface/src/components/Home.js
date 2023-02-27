@@ -41,7 +41,7 @@ function Home() {
       "http://164.92.178.243:5000/extract", formData
     ).then(
       (response) => {
-        console.log(response);
+        console.log("response keywords: ", response.data);
         setKeywords(response.data);
         setDisplayKeywords(keywords.slice(0, 20))
       }
@@ -50,12 +50,23 @@ function Home() {
         (error) => console.log(error)
       );
   };
-  console.log("keywords: ", displayKeywords)
   const convertKeywords = (keywords) => {
-    let tmp = { 
-        "selectedKeywords": keywords
+    let tmp = [[]]
+    // console.log("in convert: ", keywords[1][0])
+    keywords.map((keyword)=>{
+      tmp.push([
+        keyword[0], 
+        true,
+        "volume",
+        "first",
+        "second",
+      ])
+    })
+    console.log("in convert tmp", tmp)
+    let object_tmp = { 
+        "selectedKeywords": tmp
     }
-    return tmp
+    return object_tmp
   }
   const onSendKeyword = () => {
     let finalKeywords = convertKeywords(displayKeywords)
