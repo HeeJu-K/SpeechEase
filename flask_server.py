@@ -65,3 +65,12 @@ def get_keywords():
         return "Done"
     else:
         return "nth"
+
+@app.route("/modify", methods=["GET", "POST"])
+def display_modified():
+    if request.method == "GET":
+        return
+    elif request.method == "POST":
+        return
+    else:
+        return
