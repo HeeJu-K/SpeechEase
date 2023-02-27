@@ -12,8 +12,9 @@ response = requests.request("GET", fetch_kw_url)
 keywords = response.json()["selectedKeywords"]
 # keywords = keywords.text["selectedKeywords"]
 print("received keywords: ", keywords)
-print("received keywords visit: ", keywords[0])
+print("received keywords visit: ", keywords[0], keywords[1])
 
+post_kw_url = "http://164.92.178.243:5000/modify"
 
 # speech to text
 auth_key = ''
@@ -57,11 +58,17 @@ def speed_test(str):
     print("speed test")
 
 def process_speech(str):
-    for i in range(len(keywords)):
-        print("current keyword: ", keywords[i])
-        if str in keywords[i]:
-            keywords.remove[i]
+    str = str.lower()
+    # print("type: ", type(keywords), type(keywords[1]))
+    for i in range(1, len(keywords)):
+        # print("current keyword: ", keywords[i])
+        if str and str in keywords[i][0]:
+            print("before remove keyword", keywords[i])
+            keywords[i][1] = False
             print("removed keyword", keywords[i])
+            resp = requests.post(post_kw_url, json= keywords)
+            print("resp: ", resp)
+
 
     str = str.split(' ')
     
@@ -113,7 +120,7 @@ async def send_receive():
            while True:
                try:
                    result_str = await _ws.recv()
-                   print("here print text: ", json.loads(result_str)['text'])
+                   print("printing your speech : ", json.loads(result_str)['text'])
                except websockets.exceptions.ConnectionClosedError as e:
                    print(e)
                    assert e.code == 4008
