@@ -10,6 +10,19 @@ function Raspberry() {
     const handleHome = () => {
         navigate('/', { replace: true });
     }
+    const handleRefresh = () => {
+        axios.get(
+            // "http://127.0.0.1:5000/keywords", finalKeywords
+            "http://164.92.178.243:5000/modify"
+          ).then(
+            (res) => {
+              console.log("refreshed keywords", res.data);
+            }
+          )
+            .catch(
+              (error) => console.log(error)
+            );
+    }
 
     useEffect(() => {
         async function receiveKeywords() {
@@ -34,8 +47,11 @@ function Raspberry() {
                 </div>
                 <div>
                     {keywords.map((item) => (
-                        <div>{item[0]}</div>
+                        <div>{item[1]==True?item[0]:null}</div>
                     ))}
+                </div>
+                <div>
+                    <button onClick={handleRefresh}>Refresh</button>
                 </div>
             </div>
             <div>
