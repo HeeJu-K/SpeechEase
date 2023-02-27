@@ -47,7 +47,7 @@ function Raspberry() {
                 </div>
                 <div>
                     {keywords.map((item) => (
-                        <div>{item[1]==True?item[0]:null}</div>
+                        <div>{item[1]==true?item[0]:null}</div>
                     ))}
                 </div>
                 <div>
