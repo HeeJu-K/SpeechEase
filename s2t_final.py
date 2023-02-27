@@ -67,7 +67,7 @@ def process_speech(str):
             keywords[i][1] = False
             print("removed keyword", keywords[i])
             resp = requests.post(post_kw_url, json= keywords)
-            print("resp: ", resp)
+            print("resp: ", resp.text)
 
 
     str = str.split(' ')
