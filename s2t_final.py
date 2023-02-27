@@ -4,6 +4,18 @@ import asyncio
 import base64
 import json
 import time
+import requests
+
+#get keywords
+fetch_kw_url = "http://164.92.178.243:5000/keywords"
+response = requests.request("GET", fetch_kw_url)
+keywords = response.json()["selectedKeywords"]
+# keywords = keywords.text["selectedKeywords"]
+print("received keywords: ", keywords)
+print("received keywords visit: ", keywords[0])
+
+
+# speech to text
 auth_key = ''
 
 FRAMES_PER_BUFFER = 3200
@@ -25,8 +37,6 @@ stream = p.open(
 URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
 
 
-keywords = ['Hi', 'raspberry pi', 'great']
-
 start_time = time.time()
 str_list = []
 
@@ -47,12 +57,25 @@ def speed_test(str):
     print("speed test")
 
 def process_speech(str):
+    for i in range(len(keywords)):
+        print("current keyword: ", keywords[i])
+        if str in keywords[i]:
+            keywords.remove[i]
+            print("removed keyword", keywords[i])
+
     str = str.split(' ')
     
-    print("func print len", len(str))
-    if len(str) > 5:
-        str = str[4:]
-    print("func print len after cut", str, len(str))
+    # print("func print len", len(str))
+    # if len(str) > 5:
+    #     for word in str:
+    #         if keywords[i][0] == word:
+    #             keywords.remove[i]
+    #         else:
+    #             print("not detected")
+    #         print ("deleted keyword", keywords)
+    #     str = str[4:]
+    # print("func print len after cut", str, len(str))
+    return
 
 
 
@@ -98,7 +121,7 @@ async def send_receive():
                except Exception as e:
                    assert False, "Not a websocket 4008 error"
                process_speech(json.loads(result_str)['text'])
-               speed_test(json.loads(result_str)['text'])   # yuqi speed test
+            #    speed_test(json.loads(result_str)['text'])   # yuqi speed test
 
        send_result, receive_result = await asyncio.gather(send(), receive())
     #    print
