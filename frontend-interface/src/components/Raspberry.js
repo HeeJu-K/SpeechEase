@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 function Raspberry() {
+
+    let test_val = true
     let navigate = useNavigate();
     const [keywords, setKeywords] = useState([]);
     // let keywords = {}
@@ -14,13 +16,13 @@ function Raspberry() {
         axios.get(
             // "http://127.0.0.1:5000/modify", 
             "http://164.92.178.243:5000/modify",
-          ).then(
+        ).then(
             (res) => {
-              console.log("refreshed keywords", res.data);
+                console.log("refreshed keywords", res.data);
             }
-          )
+        )
             .catch(
-              (error) => console.log(error)
+                (error) => console.log(error)
             );
     }
 
@@ -41,13 +43,16 @@ function Raspberry() {
     return (
         <div>
             <div>
-                <div>
+                <h1 style={{marginBottom:"10px"}}>
                     for raspberry
                     {/* {keywords[0]} */}
-                </div>
+                </h1>
                 <div>
-                    {keywords.map((item) => (
-                        <div>{item[1]==true?item[0]:null}</div>
+                    {keywords.map((keyword) => (
+                        <div>
+                            <div>{keyword[1]==true?<div>{keyword[0]}</div>:<div></div>}</div>
+                            
+                        </div>
                     ))}
                 </div>
                 <div>
