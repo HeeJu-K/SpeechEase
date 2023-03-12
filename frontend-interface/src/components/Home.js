@@ -15,8 +15,8 @@ function Home() {
   const fileTypes = ["TXT", "DOC"];
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
-  const [keywords, setKeywords] = useState(["not avaiable", 0]);
-  const [displayKeywords, setDisplayKeywords] = useState(["not avaiable", 0])
+  const [keywords, setKeywords] = useState(["", 0]);
+  const [displayKeywords, setDisplayKeywords] = useState(["", 0])
   const [numKeywords, setNumKeywords] = useState(20);
   const [addString, setAddString] = useState("");
 
@@ -37,13 +37,15 @@ function Home() {
       // file.name
     );
     axios.post(
-      // "http://127.0.0.1:5000/extract", formData
-      "http://164.92.178.243:5000/extract", formData
+      "http://127.0.0.1:5000/extract", formData
+      // "http://164.92.178.243:5000/extract", formData
     ).then(
       (response) => {
         console.log("response keywords: ", response.data);
+
         setKeywords(response.data);
         setDisplayKeywords(keywords.slice(0, 20))
+        console.log("see displaykeword type", typeof displayKeywords)
       }
     )
       .catch(
@@ -53,9 +55,9 @@ function Home() {
   const convertKeywords = (keywords) => {
     let tmp = [[]]
     // console.log("in convert: ", keywords[1][0])
-    keywords.map((keyword)=>{
+    keywords.map((keyword) => {
       tmp.push([
-        keyword[0], 
+        keyword[0],
         true,
         "volume",
         "first",
@@ -63,8 +65,8 @@ function Home() {
       ])
     })
     console.log("in convert tmp", tmp)
-    let object_tmp = { 
-        "selectedKeywords": tmp
+    let object_tmp = {
+      "selectedKeywords": tmp
     }
     return object_tmp
   }
@@ -72,16 +74,16 @@ function Home() {
     let finalKeywords = convertKeywords(displayKeywords)
     console.log("converted keywords: ", finalKeywords)
     axios.post(
-        // "http://127.0.0.1:5000/keywords", finalKeywords
-        "http://164.92.178.243:5000/keywords", finalKeywords
-      ).then(
-        (response) => {
-          console.log("send", response);
-        }
-      )
-        .catch(
-          (error) => console.log(error)
-        );
+      "http://127.0.0.1:5000/keywords", finalKeywords
+      // "http://164.92.178.243:5000/keywords", finalKeywords
+    ).then(
+      (response) => {
+        console.log("send", response);
+      }
+    )
+      .catch(
+        (error) => console.log(error)
+      );
   };
 
   const onChangeSlider = (value) => {
@@ -92,32 +94,70 @@ function Home() {
   }
 
   const handleKwInput = (e) => {
-    // console.log("add keyword", e.target.value)
     setAddString(e.target.value)
   }
   const handleAddKw = (e) => {
     let index = Object.keys(displayKeywords).length
     let tmp = [
-      ...[[addString, 0.01]],
+      ...[[addString]],
       ...displayKeywords,
       // ...displayKeywords.slice(index)
     ]
     setDisplayKeywords(tmp)
   }
 
-  const handleErase = (e) => {
-    console.log("erase e", e.target.id, typeof (e.target.id))
-    let index = parseInt(e.target.id)
-    // let erasetmp = displayKeywords.splice(e.target.id,1)
-    let disp_tmp1 = keywords.slice(0, index)
-    let disp_tmp2 = keywords.slice(index + 1, numKeywords)
-    let disp_tmp = disp_tmp1.concat(disp_tmp2)
-    setDisplayKeywords(disp_tmp)
+  const handleEraseElem = (e) => {
+    console.log("erase elem e", e.target.id, e)
+    let colIdx = parseInt(e.target.id[0])
+    let rowIdx = parseInt(e.target.id.substring(2))
+    console.log("erase elem e content", displayKeywords, rowIdx, colIdx)
 
-    let full_tmp1 = keywords.slice(0, index)
-    let full_tmp2 = keywords.slice(index + 1)
-    let full_tmp = full_tmp1.concat(full_tmp2)
+    console.log("erase e elem row keywords", keywords, keywords[rowIdx])
+    let row_tmp1 = keywords[rowIdx].slice(0, colIdx) //the front part
+    let row_tmp2 = keywords[rowIdx].slice(colIdx + 1) //the last part
+    let row_tmp = row_tmp1.concat(row_tmp2)
+    console.log("erase e elem row_tmp", row_tmp)
+    let full_tmp1 = keywords.slice(0, rowIdx)
+    let full_tmp2 = full_tmp1.concat([row_tmp])
+    let full_tmp3 = keywords.slice(rowIdx + 1)
+    let full_tmp = full_tmp2.concat(full_tmp3)
+    console.log("erase e elem full_tmp", full_tmp, typeof full_tmp, full_tmp.slice(0, numKeywords))
     setKeywords(full_tmp)
+    setDisplayKeywords(full_tmp.slice(0, numKeywords))
+    // // let erasetmp = displayKeywords.splice(e.target.id,1)
+    // let disp_tmp1 = keywords.slice(0, index)
+    // let disp_tmp2 = keywords.slice(index + 1, numKeywords)
+    // let disp_tmp = disp_tmp1.concat(disp_tmp2)
+    // setDisplayKeywords(disp_tmp)
+
+    // console.log("fullkeywords", keywords.slice(e.target.id+1, Object.keys(displayKeywords).length))
+    // let eraseKw = [
+    //   keywords.slice(0, e.target.id).concat(keywords.slice(e.target.id+1))
+    // ]
+    // console.log("fullkeywords", keywords.slice(0, e.target.id), keywords.slice(e.target.id+1))
+    // let eraseDkw = [
+    //   ...displayKeywords.slice(0, e.target.id),
+    //   ...displayKeywords.slice(e.target.id+1, numKeywords),
+    // ]
+    // console.log("fullkw", eraseKw, "display Kw", eraseDkw)
+  }
+  const handleEraseRow = (e) => {
+    console.log("erase e", e.target.id, typeof (e.target.id))
+    let rowIdx = parseInt(e.target.id - 1)
+    console.log("erase row e content", displayKeywords, rowIdx)
+
+    // let full_tmp1 = keywords.slice(0, index)
+    // let full_tmp2 = keywords.slice(index + 1)
+    // let full_tmp = full_tmp1.concat(full_tmp2)
+    // setKeywords(full_tmp)
+
+    // let index = parseInt(e.target.id)
+    // // let erasetmp = displayKeywords.splice(e.target.id,1)
+    // let disp_tmp1 = keywords.slice(0, index)
+    // let disp_tmp2 = keywords.slice(index + 1, numKeywords)
+    // let disp_tmp = disp_tmp1.concat(disp_tmp2)
+    // setDisplayKeywords(disp_tmp)
+
     // console.log("fullkeywords", keywords.slice(e.target.id+1, Object.keys(displayKeywords).length))
     // let eraseKw = [
     //   keywords.slice(0, e.target.id).concat(keywords.slice(e.target.id+1))
@@ -129,7 +169,6 @@ function Home() {
     // ]
     // console.log("fullkw", eraseKw, "display Kw", eraseDkw)
     setNumKeywords(numKeywords - 1)
-    
   }
 
   //re-route
@@ -138,7 +177,6 @@ function Home() {
     // navigate('/Raspberry');
     onSendKeyword()
   }
-
 
   return (
     <div className="Home">
@@ -155,16 +193,24 @@ function Home() {
       {/* <p>{keywords}</p><p>{typeof(keywords)}</p> */}
       <div className={styles.KeywordsBox} style={{ marginTop: "20px", border: "0.75px solid ", alignContent: "center" }}>
         {
-          displayKeywords.map((keyword, index) => {
-            return (
-              <div >
-                <button id={index} onClick={handleErase}>{keyword[0]} X </button>
-                {/* <div >{keyword[0]}</div>
-                <button >X</button> */}
-              </div>
-            )
-          }
-          )
+          displayKeywords.map((keyword, index) => (
+            <div key={keyword.toString()} style={{ padding: "0.1rem" }}>
+              {
+                Object.keys(keyword).map((idx) => (
+                  <>
+                    {keyword[idx] != "" &&
+                      <>
+                        {keyword[idx]}<button id={[idx, index]} onClick={handleEraseElem}>  X </button>
+                      </>
+                    }
+                  </>
+                ))
+              }
+              {keyword != "" &&
+                <button id={index} onClick={handleEraseRow} style={{ float: "right" }} > X </button>
+              }
+            </div>
+          ))
         }
       </div>
       <input placeholder='add keywords here' onChange={handleKwInput}></input>
@@ -173,22 +219,6 @@ function Home() {
       <p>{numKeywords > 50 ? 50 : numKeywords}</p>
       <button onClick={handleSend}>Send</button>
     </div >
-    //  <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div> 
   );
 }
 

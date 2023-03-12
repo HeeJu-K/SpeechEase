@@ -19,31 +19,6 @@ function App() {
   //   setFile(fileList[0]);
   // };
 
-  // const onFileUpload = () => {
-  //   // Create an object of formData
-  //   const formData = new FormData();
-
-  //   console.log("file:");
-  //   console.log(file);
-  //   // Update the formData object
-  //   formData.append(
-  //     "textfile",
-  //     file,
-  //     // file.name
-  //   );
-  //   axios.post(
-  //     "http://127.0.0.1:5000/extract", formData
-  //   ).then(
-  //     (response) => {
-  //       console.log(response);
-  //       setKeywords(response.data);
-  //       setDisplayKeywords(keywords.slice(0, 20))
-  //     }
-  //   )
-  //     .catch(
-  //       (error) => console.log(error)
-  //     );
-  // };
 
   // const onChangeSlider = (value) => {
   //   setNumKeywords(value)

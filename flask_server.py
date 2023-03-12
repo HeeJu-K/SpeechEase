@@ -1,12 +1,12 @@
 from flask import Flask, request
 from flask_cors import CORS
+from nltk.corpus import wordnet
 import yake
 import json
 # import spacy
 
 app = Flask(__name__)
 CORS(app)
-
 
 # nlp = spacy.load("en_core_web_lg")
 
@@ -21,29 +21,42 @@ windowSize = 1
 selected_keywords = {}
 modified_keywords = {}
 
-# text = ""
-
-
-# kw_extractor = yake.KeywordExtractor()
-# keywords = kw_extractor.extract_keywords(doc)
+#extract keywords from the text file received
 def extraction(numOfKeywords):
     kw_extractor = yake.KeywordExtractor(
         lan=language, n=max_ngram_size, 
         dedupLim=deduplication_thresold, 
         dedupFunc=deduplication_algo, 
         windowsSize=windowSize, top=numOfKeywords, features=None)
-    print("typeof text", type(text))
 
     keywords = kw_extractor.extract_keywords(text.decode('utf-8'))
-    print("len", len(keywords), numOfKeywords)
+    keywords = [columns[0] for columns in keywords]
+    # print("len", len(keywords), numOfKeywords)
+    keywords = get_synonyms(keywords)
     return keywords
 
-    # print("keywords \n",keywords)
-    # keywords_embeddings = []
-    # for kw in keywords:
-    #     print(kw[0])
-    #     keywords_embeddings.append(nlp.vocab[kw])
-    # print("keywords_embeddings", keywords_embeddings)
+#append synonyms to the list of keywords extracted from script
+def get_synonyms(original_kw):
+    # print("for getting synonym")
+    similar_list = [[]]
+    print("for getting synonym original_kw", original_kw)
+    for kw in original_kw:
+        print("for getting synonym kw", kw)
+        tmp = []
+        for syn in wordnet.synsets(kw):
+            for l in syn.lemmas():
+                if l.name() != kw and len(tmp)<4 and l.name() not in tmp and l.name != kw.lower():
+                    tmp.append(l.name().replace('_', " "))
+       
+        print("see tmp", tmp, similar_list)
+        row = []
+        row.append(kw)
+        for t in tmp:
+            row.append(t)
+        similar_list.append(row)
+
+    print("appended kw: ", similar_list)
+    return similar_list
 
 @app.route("/extract", methods=["POST"])
 def extract_key_words():
@@ -52,7 +65,7 @@ def extract_key_words():
     global text 
     text = f.read()
     extracted = extraction(50)
-    return extracted
+    return json.dumps(extracted)
 
 @app.route("/keywords", methods=["GET", "POST"])
 def get_keywords():
