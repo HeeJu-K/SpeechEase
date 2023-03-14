@@ -126,7 +126,7 @@ function App() {
     //   <p>{numKeywords > 50 ? 50 : numKeywords}</p>
     //   <button onClick={handleSend}>Send</button>
     // </div >
-    <div className="App">
+    <div >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+
 import { FileUploader } from "react-drag-drop-files";
 import axios from 'axios';
 
 import { Slider, Switch } from 'antd';
-import styles from './styles.less';
+import './styles.less';
 
 // import yake;
 
@@ -19,6 +22,12 @@ function Home() {
   const [displayKeywords, setDisplayKeywords] = useState(["", 0])
   const [numKeywords, setNumKeywords] = useState(20);
   const [addString, setAddString] = useState("");
+  const [tabIdx, setTabIdx] = useState(0)
+
+  const onTabSelect = (index) => {
+    setTabIdx(index)
+    console.log("tabindex in select", tabIdx)
+  }
 
   const handleChange = (fileList) => {
     setFile(fileList[0]);
@@ -36,6 +45,11 @@ function Home() {
       file,
       // file.name
     );
+    formData.append(
+      "tabIndex",
+      tabIdx
+    )
+    console.log("tabindex", tabIdx)
     axios.post(
       "http://127.0.0.1:5000/extract", formData
       // "http://164.92.178.243:5000/extract", formData
@@ -179,45 +193,60 @@ function Home() {
   }
 
   return (
-    <div className="Home">
-      <h1>Drag & Drop Your Script</h1>
-      <FileUploader
-        multiple={true}
-        handleChange={handleChange}
-        name="file"
-        types={fileTypes}
-      />
-      <p>{file ? `File name: ${file.name}` : "no files uploaded yet"}</p>
-      <p>{fileContent}</p>
-      <button onClick={onFileUpload}>Extract Keywords</button>
-      {/* <p>{keywords}</p><p>{typeof(keywords)}</p> */}
-      <div className={styles.KeywordsBox} style={{ marginTop: "20px", border: "0.75px solid ", alignContent: "center" }}>
-        {
-          displayKeywords.map((keyword, index) => (
-            <div key={keyword.toString()} style={{ padding: "0.1rem" }}>
-              {
-                Object.keys(keyword).map((idx) => (
-                  <>
-                    {keyword[idx] != "" &&
-                      <>
-                        {keyword[idx]}<button id={[idx, index]} onClick={handleEraseElem}>  X </button>
-                      </>
-                    }
-                  </>
-                ))
-              }
-              {keyword != "" &&
-                <button id={index} onClick={handleEraseRow} style={{ float: "right" }} > X </button>
-              }
-            </div>
-          ))
-        }
+    <div className="main">
+      {/* <Tabs defaultIndex={0} onSelect={(index) => onTabSelect(index)}
+        style={{ marginTop: "3rem", fontSize: "1rem" }}
+      >
+        <TabList>
+          <Tab>Upload Script</Tab>
+          <Tab>Upload Keywords</Tab>
+        </TabList>
+        <TabPanel></TabPanel>
+        <TabPanel></TabPanel>
+      </Tabs> */}
+      <div  >
+        <div className="upload">Drag & Drop Your Script</div>
+        <div style={{ alignItems: "center", marginLeft:"31%" }}>
+          <FileUploader
+            multiple={true}
+            handleChange={handleChange}
+            name="file"
+            types={fileTypes}
+          />
+          <div style={{ marginLeft:"175px"}}>{file ? `File name: ${file.name}` : "no files uploaded yet"}</div>
+          <div style={{ textAlign: "center"}}>{fileContent}</div>
+        </div>
+        <button style={{alignItems:"center"}} onClick={onFileUpload}>Extract Keywords</button>
+
+        {/* <p>{keywords}</p><p>{typeof(keywords)}</p> */}
+        <div className="KeywordsBox" style={{ marginTop: "20px", border: "0.75px solid ", alignContent: "center" }}>
+          {
+            displayKeywords.map((keyword, index) => (
+              <div key={keyword.toString()} style={{ padding: "0.1rem" }}>
+                {
+                  Object.keys(keyword).map((idx) => (
+                    <>
+                      {keyword[idx] != "" &&
+                        <>
+                          {keyword[idx]}<button id={[idx, index]} onClick={handleEraseElem}>  X </button>
+                        </>
+                      }
+                    </>
+                  ))
+                }
+                {keyword != "" &&
+                  <button id={index} onClick={handleEraseRow} style={{ float: "right" }} > X </button>
+                }
+              </div>
+            ))
+          }
+        </div>
+        <input placeholder='add keywords here' onChange={handleKwInput}></input>
+        <button onClick={handleAddKw}>Add</button>
+        <Slider defaultValue={30} onChange={onChangeSlider} />
+        <p>{numKeywords > 50 ? 50 : numKeywords}</p>
+        <button onClick={handleSend}>Send</button>
       </div>
-      <input placeholder='add keywords here' onChange={handleKwInput}></input>
-      <button onClick={handleAddKw}>Add</button>
-      <Slider defaultValue={30} onChange={onChangeSlider} />
-      <p>{numKeywords > 50 ? 50 : numKeywords}</p>
-      <button onClick={handleSend}>Send</button>
     </div >
   );
 }
