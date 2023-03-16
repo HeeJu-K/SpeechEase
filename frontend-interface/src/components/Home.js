@@ -165,10 +165,39 @@ function Home() {
     onSendKeyword()
   }
 
+  const handleStart = () => {
+    // navigate('/Raspberry');
+    axios.post(
+      // "http://127.0.0.1:5000/keywords", finalKeywords
+      "http://10.19.0.61:5000/start",
+    ).then(
+      (response) => {
+        console.log("starting", response);
+      }
+    )
+      .catch(
+        (error) => console.log(error)
+      );
+  }
+  const handleStop = () => {
+    // navigate('/Raspberry');
+    axios.post(
+      // "http://127.0.0.1:5000/keywords", finalKeywords
+      "http://10.19.0.61:5000/stop",
+    ).then(
+      (response) => {
+        console.log("stopping", response);
+      }
+    )
+      .catch(
+        (error) => console.log(error)
+      );
+  }
+
   return (
     <div className="main">
       <Tabs defaultIndex={0} onSelect={(index) => onTabSelect(index)}
-      className="upload-type-tab"
+        className="upload-type-tab"
       >
         <TabList>
           <Tab>Upload Script</Tab>
@@ -177,7 +206,7 @@ function Home() {
         {/* <TabPanel>hello</TabPanel>
         <TabPanel></TabPanel> */}
       </Tabs>
-      <div  className="content">
+      <div className="content">
         <div className="upload">Drag & Drop Your Script</div>
         <div style={{ alignItems: "center" }}>
           <FileUploader
@@ -209,7 +238,7 @@ function Home() {
                 }
                 {keyword != "" &&
                   <button className="smallButton"
-                   id={index} onClick={handleEraseRow} style={{ float: "right", marginLeft:"30px" }} > X </button>
+                    id={index} onClick={handleEraseRow} style={{ float: "right", marginLeft: "30px" }} > X </button>
                 }
               </div>
             ))
@@ -219,7 +248,9 @@ function Home() {
         <button onClick={handleAddKw}>Add</button>
         <Slider defaultValue={30} onChange={onChangeSlider} />
         <p>{numKeywords > 50 ? 50 : numKeywords}</p>
-        <button onClick={handleSend}>Send</button>
+        {/* <button onClick={handleSend}>Send</button> */}
+        <button onClick={handleStart}>Start</button>
+        <button onClick={handleStop}>Stop</button>
       </div>
     </div >
   );
