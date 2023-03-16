@@ -2,11 +2,24 @@ from flask import Flask, request
 from flask_cors import CORS
 import json
 
+import subprocess
+
+
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/start", methods=["GET"])
+process = None
+
+@app.route("/start", methods=["POST"])
 def start_rasp():
-    global isStart
-    
+    print("starting the process")
+    global process
+    process = subprocess.Popen(['python', 'rasp_code.py'])
+    return 
+
+@app.route("/shut", methods=["POST"])
+def start_rasp():
+    print("shutting down the process")
+    global process
+    process.terminate()
     return 

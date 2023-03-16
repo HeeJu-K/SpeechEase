@@ -23,7 +23,7 @@ output_content = [0, []]
 
 duration = 10 #in seconds
 
-# loop = None
+loop = None
 
 auth_key = '92b43f81e45647aa9b3818623299e3df'
 FRAMES_PER_BUFFER = 4096
@@ -54,15 +54,16 @@ str_list = []
 def write_output():
     print("heres the output to be writeed::", output_content)
     # print("writing to text file")
-    output_kw = []
-    output_kw.append(str(output_content[0]))
+    tmp_list = []
+    tmp_list.append(str(output_content[0]))
     for keyword in output_content[1]:
         if keyword[1] == True:
-            output_kw.append(keyword[0] + "\n")
-            if len(output_kw) > 3:
+            tmp_list.append(keyword[0])
+            if len(tmp_list) > 3:
                 break
+    output_kw = '\n'.join(tmp_list)
     with open("output.text", "w") as output_file:
-        output_file.write(str(output_kw))
+        output_file.write(output_kw)
 
 def retrieve_keywords():
     global keywords
@@ -147,7 +148,7 @@ def speed_test(str):
 
 
 def process_speech(str):
-    global keywords
+    global keywords, loop
     str = str.lower()
     print("transcription:", str)
     if "bye" in str:
@@ -172,64 +173,63 @@ def process_speech(str):
 
 async def send_receive():
    
-   global power
-   print(f'Connecting websocket to url ${URL}')
-   async with websockets.connect(
-       URL,
-       extra_headers=(("Authorization", auth_key),),
-       ping_interval=5,
-       ping_timeout=20
-   ) as _ws:
-       await asyncio.sleep(0.1)
-       print("Receiving SessionBegins ...")
-       session_begins = await _ws.recv()
-       print(session_begins)
-       print("Sending messages ...")
-       async def send():
-           global power
-           while True:
-               try:
-                   data = stream.read(FRAMES_PER_BUFFER, exception_on_overflow = False)
+    global power, loop
+    print(f'Connecting websocket to url ${URL}')
+    async with websockets.connect(
+        URL,
+        extra_headers=(("Authorization", auth_key),),
+        ping_interval=5,
+        ping_timeout=20
+    ) as _ws:
+        await asyncio.sleep(0.1)
+        print("Receiving SessionBegins ...")
+        session_begins = await _ws.recv()
+        print(session_begins)
+        print("Sending messages ...")
+        async def send():
+            global power
+            while True:
+                try:
+                    data = stream.read(FRAMES_PER_BUFFER, exception_on_overflow = False)
                    
-                   power.append(audioop.rms(data, 2))
-                   data = base64.b64encode(data).decode("utf-8")
-                   json_data = json.dumps({"audio_data":str(data)})
-                   await _ws.send(json_data)
-               except websockets.exceptions.ConnectionClosedError as e:
-                   print(e)
-                   assert e.code == 4008
-                   break
-               except Exception as e:
-                   assert False, "Not a websocket 4008 error"
-               await asyncio.sleep(0.01)
+                    power.append(audioop.rms(data, 2))
+                    data = base64.b64encode(data).decode("utf-8")
+                    json_data = json.dumps({"audio_data":str(data)})
+                    await _ws.send(json_data)
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(e)
+                    assert e.code == 4008
+                    break
+                except Exception as e:
+                    assert False, "Not a websocket 4008 error"
+                await asyncio.sleep(0.01)
 
-           return True
+            return True
 
-       async def receive():
-           global power 
+        async def receive():
+            global power 
            
-           while True:
-               try:
-                   result_str = await _ws.recv()
-                   print("here print text: ", json.loads(result_str)['text'])
-               except websockets.exceptions.ConnectionClosedError as e:
-                   print(e)
-                   assert e.code == 4008
-                   break
-               except Exception as e:
-                   assert False, "Not a websocket 4008 error"
-               process_speech(json.loads(result_str)['text'])
-               speed_test(json.loads(result_str)['text'])   # yuqi speed test
-               print(power)
-               if len(power) % 6 == 0:
+            while True:
+                try:
+                    result_str = await _ws.recv()
+                    print("here print text: ", json.loads(result_str)['text'])
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(e)
+                    assert e.code == 4008
+                    break
+                except Exception as e:
+                    assert False, "Not a websocket 4008 error"
+                process_speech(json.loads(result_str)['text'])
+                speed_test(json.loads(result_str)['text'])   # yuqi speed test
+                print(power)
+                if len(power) % 6 == 0:
                    
-                   volume_test(power, json.loads(result_str)['text'])
-                   power = []
+                    volume_test(power, json.loads(result_str)['text'])
+                    power = []
                             
-       send_result, receive_result = await asyncio.gather(send(), receive())
-        # loop
+        send_result, receive_result = await asyncio.gather(send(), receive())
     #    print("getting loop")
-    #    loop = asyncio.get_running_loop()
+    loop = asyncio.get_running_loop()
     #    print
 
 # global loop
@@ -237,7 +237,6 @@ if __name__ == '__main__':
     retrieve_keywords()
 
     asyncio.run(send_receive())
-    print("getting loop")
     # loop = asyncio.get_running_loop()
 
 
