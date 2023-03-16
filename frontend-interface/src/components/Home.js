@@ -12,6 +12,8 @@ import './styles.less';
 
 // import yake;
 
+const SERVER_IP = "http://10.19.228.170:5000"
+const RASP_IP = "http://10.19.0.61:5000"
 
 function Home() {
 
@@ -52,7 +54,7 @@ function Home() {
     console.log("tabindex", tabIdx)
     axios.post(
       // "http://127.0.0.1:5000/extract", formData
-      "http://164.92.178.243:5000/extract", formData
+      SERVER_IP + "/extract", formData
     ).then(
       (response) => {
         console.log("response keywords: ", response.data);
@@ -84,7 +86,7 @@ function Home() {
     console.log("converted keywords: ", finalKeywords)
     axios.post(
       // "http://127.0.0.1:5000/keywords", finalKeywords
-      "http://164.92.178.243:5000/keywords", finalKeywords
+      SERVER_IP + "/keywords", finalKeywords
     ).then(
       (response) => {
         console.log("send", response);
@@ -169,7 +171,7 @@ function Home() {
     // navigate('/Raspberry');
     axios.post(
       // "http://127.0.0.1:5000/keywords", finalKeywords
-      "http://10.19.0.61:5000/start",
+      RASP_IP + "/start",
     ).then(
       (response) => {
         console.log("starting", response);
@@ -183,7 +185,7 @@ function Home() {
     // navigate('/Raspberry');
     axios.post(
       // "http://127.0.0.1:5000/keywords", finalKeywords
-      "http://10.19.0.61:5000/shut",
+      RASP_IP + "/shut",
     ).then(
       (response) => {
         console.log("stopping", response);

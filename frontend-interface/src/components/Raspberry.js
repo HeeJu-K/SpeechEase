@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const SERVER_IP = "http://10.19.228.170:5000"
+const RASP_IP = "http://10.19.0.61:5000"
 
 function Raspberry() {
 
@@ -15,7 +17,7 @@ function Raspberry() {
     const handleRefresh = () => {
         axios.get(
             // "http://127.0.0.1:5000/modify", 
-            "http://164.92.178.243:5000/modify",
+            SERVER_IP + "/modify",
         ).then(
             (res) => {
                 console.log("refreshed keywords", res.data);
@@ -31,7 +33,7 @@ function Raspberry() {
         async function receiveKeywords() {
             await axios.get(
                 // 'http://127.0.0.1:5000/keywords',
-                'http://164.92.178.243:5000/keywords',
+                SERVER_IP + "/keywords",
             )
                 .then((res) => {
                     console.log("check res", res.data["selectedKeywords"])
