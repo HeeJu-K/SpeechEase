@@ -43,8 +43,9 @@ stream = p.open(
 
 # the AssemblyAI endpoint we're going to hit
 URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
+IP = "http://10.19.228.170:5000"
 
-post_kw_url = "http://164.92.178.243:5000/modify"
+post_kw_url = IP + "/modify"
 # keywords = ['Hi', 'raspberry pi', 'great']
 
 # add speed detection - yuqi
@@ -68,7 +69,7 @@ def write_output():
 def retrieve_keywords():
     global keywords
     #get keywords
-    fetch_kw_url = "http://164.92.178.243:5000/keywords"
+    fetch_kw_url = IP + "/keywords"
     response = requests.request("GET", fetch_kw_url)
     keywords = response.json()["selectedKeywords"]
     # keywords = keywords.text["selectedKeywords"]
