@@ -15,11 +15,11 @@ def start_rasp():
     print("starting the process")
     global process
     process = subprocess.Popen(['python', 'rasp_code.py'])
-    return 
+    return json.dumps("Start")
 
 @app.route("/shut", methods=["POST"])
-def start_rasp():
+def shut_rasp():
     print("shutting down the process")
     global process
     process.terminate()
-    return 
+    return json.dumps("Shut") 
