@@ -194,29 +194,29 @@ function Home() {
 
   return (
     <div className="main">
-      {/* <Tabs defaultIndex={0} onSelect={(index) => onTabSelect(index)}
-        style={{ marginTop: "3rem", fontSize: "1rem" }}
+      <Tabs defaultIndex={0} onSelect={(index) => onTabSelect(index)}
+      className="upload-type-tab"
       >
         <TabList>
           <Tab>Upload Script</Tab>
           <Tab>Upload Keywords</Tab>
         </TabList>
-        <TabPanel></TabPanel>
-        <TabPanel></TabPanel>
-      </Tabs> */}
-      <div  >
+        {/* <TabPanel>hello</TabPanel>
+        <TabPanel></TabPanel> */}
+      </Tabs>
+      <div  className="content">
         <div className="upload">Drag & Drop Your Script</div>
-        <div style={{ alignItems: "center", marginLeft:"31%" }}>
+        <div style={{ alignItems: "center" }}>
           <FileUploader
             multiple={true}
             handleChange={handleChange}
             name="file"
             types={fileTypes}
           />
-          <div style={{ marginLeft:"175px"}}>{file ? `File name: ${file.name}` : "no files uploaded yet"}</div>
-          <div style={{ textAlign: "center"}}>{fileContent}</div>
+          <div style={{ marginLeft: "175px" }}>{file ? `File name: ${file.name}` : "no files uploaded yet"}</div>
+          <div style={{ textAlign: "center" }}>{fileContent}</div>
         </div>
-        <button style={{alignItems:"center"}} onClick={onFileUpload}>Extract Keywords</button>
+        <button className="selectionButton" style={{ alignItems: "center" }} onClick={onFileUpload}>Extract Keywords</button>
 
         {/* <p>{keywords}</p><p>{typeof(keywords)}</p> */}
         <div className="KeywordsBox" style={{ marginTop: "20px", border: "0.75px solid ", alignContent: "center" }}>
@@ -228,7 +228,7 @@ function Home() {
                     <>
                       {keyword[idx] != "" &&
                         <>
-                          {keyword[idx]}<button id={[idx, index]} onClick={handleEraseElem}>  X </button>
+                          {keyword[idx]}<button className="selectionButton" id={[idx, index]} onClick={handleEraseElem}>  X </button>
                         </>
                       }
                     </>
