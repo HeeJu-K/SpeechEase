@@ -18,8 +18,8 @@ function Home() {
   const fileTypes = ["TXT", "DOC"];
   const [file, setFile] = useState(null);
   const [fileContent, setFileContent] = useState(null);
-  const [keywords, setKeywords] = useState(["", 0]);
-  const [displayKeywords, setDisplayKeywords] = useState(["", 0])
+  const [keywords, setKeywords] = useState([]);
+  const [displayKeywords, setDisplayKeywords] = useState([])
   const [numKeywords, setNumKeywords] = useState(20);
   const [addString, setAddString] = useState("");
   const [tabIdx, setTabIdx] = useState(0)
@@ -51,8 +51,8 @@ function Home() {
     )
     console.log("tabindex", tabIdx)
     axios.post(
-      "http://127.0.0.1:5000/extract", formData
-      // "http://164.92.178.243:5000/extract", formData
+      // "http://127.0.0.1:5000/extract", formData
+      "http://164.92.178.243:5000/extract", formData
     ).then(
       (response) => {
         console.log("response keywords: ", response.data);
@@ -70,26 +70,21 @@ function Home() {
     let tmp = [[]]
     // console.log("in convert: ", keywords[1][0])
     keywords.map((keyword) => {
-      tmp.push([
-        keyword[0],
-        true,
-        "volume",
-        "first",
-        "second",
-      ])
+      keyword.splice(1, 0, true)
     })
-    console.log("in convert tmp", tmp)
+    console.log("in convert keyword", keywords)
     let object_tmp = {
-      "selectedKeywords": tmp
+      "selectedKeywords": keywords
     }
+    console.log("in convert object_tmp", object_tmp)
     return object_tmp
   }
   const onSendKeyword = () => {
     let finalKeywords = convertKeywords(displayKeywords)
     console.log("converted keywords: ", finalKeywords)
     axios.post(
-      "http://127.0.0.1:5000/keywords", finalKeywords
-      // "http://164.92.178.243:5000/keywords", finalKeywords
+      // "http://127.0.0.1:5000/keywords", finalKeywords
+      "http://164.92.178.243:5000/keywords", finalKeywords
     ).then(
       (response) => {
         console.log("send", response);
@@ -160,28 +155,6 @@ function Home() {
     let rowIdx = parseInt(e.target.id - 1)
     console.log("erase row e content", displayKeywords, rowIdx)
 
-    // let full_tmp1 = keywords.slice(0, index)
-    // let full_tmp2 = keywords.slice(index + 1)
-    // let full_tmp = full_tmp1.concat(full_tmp2)
-    // setKeywords(full_tmp)
-
-    // let index = parseInt(e.target.id)
-    // // let erasetmp = displayKeywords.splice(e.target.id,1)
-    // let disp_tmp1 = keywords.slice(0, index)
-    // let disp_tmp2 = keywords.slice(index + 1, numKeywords)
-    // let disp_tmp = disp_tmp1.concat(disp_tmp2)
-    // setDisplayKeywords(disp_tmp)
-
-    // console.log("fullkeywords", keywords.slice(e.target.id+1, Object.keys(displayKeywords).length))
-    // let eraseKw = [
-    //   keywords.slice(0, e.target.id).concat(keywords.slice(e.target.id+1))
-    // ]
-    // console.log("fullkeywords", keywords.slice(0, e.target.id), keywords.slice(e.target.id+1))
-    // let eraseDkw = [
-    //   ...displayKeywords.slice(0, e.target.id),
-    //   ...displayKeywords.slice(e.target.id+1, numKeywords),
-    // ]
-    // console.log("fullkw", eraseKw, "display Kw", eraseDkw)
     setNumKeywords(numKeywords - 1)
   }
 
@@ -228,14 +201,15 @@ function Home() {
                     <>
                       {keyword[idx] != "" &&
                         <>
-                          {keyword[idx]}<button className="selectionButton" id={[idx, index]} onClick={handleEraseElem}>  X </button>
+                          {keyword[idx]}<button className="smallButton" id={[idx, index]} onClick={handleEraseElem}>  X </button>
                         </>
                       }
                     </>
                   ))
                 }
                 {keyword != "" &&
-                  <button id={index} onClick={handleEraseRow} style={{ float: "right" }} > X </button>
+                  <button className="smallButton"
+                   id={index} onClick={handleEraseRow} style={{ float: "right", marginLeft:"30px" }} > X </button>
                 }
               </div>
             ))

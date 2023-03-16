@@ -14,8 +14,8 @@ function Raspberry() {
     }
     const handleRefresh = () => {
         axios.get(
-            "http://127.0.0.1:5000/modify", 
-            // "http://164.92.178.243:5000/modify",
+            // "http://127.0.0.1:5000/modify", 
+            "http://164.92.178.243:5000/modify",
         ).then(
             (res) => {
                 console.log("refreshed keywords", res.data);
@@ -30,16 +30,22 @@ function Raspberry() {
     useEffect(() => {
         async function receiveKeywords() {
             await axios.get(
-                'http://127.0.0.1:5000/keywords',
-                // 'http://164.92.178.243:5000/keywords',
+                // 'http://127.0.0.1:5000/keywords',
+                'http://164.92.178.243:5000/keywords',
             )
                 .then((res) => {
+                    console.log("check res", res.data["selectedKeywords"])
                     setKeywords(res.data["selectedKeywords"])
                 });
         }
         receiveKeywords();
-    }, [])
 
+        console.log("rasp see keywords", keywords)
+        // keywords.shift()
+        console.log("rasp see keywords after shift", keywords)
+    }, [])
+    // console.log("see keywords 00 ", keywords)
+    // setKeywords(keywords.slice(1))
     console.log("see keywords", keywords)
     return (
         <div>
@@ -51,7 +57,7 @@ function Raspberry() {
                 <div>
                     {keywords.map((keyword) => (
                         <div>
-                            <div>{keyword[1]==true?<div>{keyword[0]}</div>:<div></div>}</div>
+                            <div>{ keyword[1]===true?<div>{keyword[0]}</div>:<div></div>}</div>
                             
                         </div>
                     ))}
