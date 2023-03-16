@@ -7,6 +7,8 @@ import audioop
 #from collections import deque
 import time
 import serial
+import requests
+
 # from ctypes import *
 # 
 # feedback = cdll.LoadLibrary(home/pi/Desktop/cloud/ER-TFTM1.28-1/tft.so)
@@ -14,10 +16,14 @@ import serial
 # 打开串口连接
 #ser = serial.Serial('/dev/ttyACM0', 9600)
 
-global power
 power = []
 
+keywords = []
+output_content = [0, []]
+
 duration = 10 #in seconds
+
+# loop = None
 
 auth_key = '92b43f81e45647aa9b3818623299e3df'
 FRAMES_PER_BUFFER = 4096
@@ -35,32 +41,69 @@ stream = p.open(
    frames_per_buffer=FRAMES_PER_BUFFER
 )
 
-
 # the AssemblyAI endpoint we're going to hit
 URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
 
-
-keywords = ['Hi', 'raspberry pi', 'great']
+post_kw_url = "http://164.92.178.243:5000/modify"
+# keywords = ['Hi', 'raspberry pi', 'great']
 
 # add speed detection - yuqi
 start_time = time.time()
 str_list = []
 
+def write_output():
+    print("heres the output to be writeed::", output_content)
+    # print("writing to text file")
+    output_kw = []
+    output_kw.append(str(output_content[0]))
+    for keyword in output_content[1]:
+        if keyword[1] == True:
+            output_kw.append(keyword[0] + "\n")
+            if len(output_kw) > 3:
+                break
+    with open("output.text", "w") as output_file:
+        output_file.write(str(output_kw))
+
+def retrieve_keywords():
+    global keywords
+    #get keywords
+    fetch_kw_url = "http://164.92.178.243:5000/keywords"
+    response = requests.request("GET", fetch_kw_url)
+    keywords = response.json()["selectedKeywords"]
+    # keywords = keywords.text["selectedKeywords"]
+    print("received keywords: ", keywords)
+    print("received keywords visit: ", keywords[0], keywords[1])
+    keywords = keywords[1:]
+    output_content[1] = keywords
+    write_output()
+    # output_kw = []
+    # for keyword in keywords:
+    #     if keyword[1] == True:
+    #         output_kw.append(keyword[0] + "\n")
+    #         if len(output_kw) > 3:
+    #             break
+    # with open("output.text", "w") as output_file:
+    #     output_file.write(str(output_kw))
+
 def volume_test(p, str):
+    global output_content
     if str == '':
         return
     avg_power = sum(power) / len(power)
     print('Average Power : ', avg_power)
     if avg_power > 800:
         print("Too Loud")
-                
+        output_content[0] = 1
+        write_output() 
         
     elif avg_power < 250:
         print("Too Low")
-        #output_file.write('2\n')
+        output_content[0] = 2
+        write_output()
     else:
         print("Normal volume")
-        #output_file.write('0\n')
+        output_content[0] = 0
+        write_output()
         
     print('volume_test')
 
@@ -79,15 +122,21 @@ def speed_test(str):
         print("enter")
         if len(str_list) > 5: #check一下是不是有5个词以上
             print("too fast")
+            output_content[0] = 3
+            write_output()
             # output_file.write('3\n')
-            with open("output.txt", "w") as output_file:
-                output_file.write(f"This is too loud.\n")
-                output_file.close()
+            # with open("output.txt", "w") as output_file:
+            #     output_file.write(f"This is too loud.\n")
+            #     output_file.close()
             #ser.write(b'F')  # 向串口发送字节'F'，指示Arduino控制LED
         elif len(str_list) < 3:
             print("too slow")
+            output_content[0] = 4
+            write_output()
         else:
             print("Normal speed")
+            output_content[0] = 0
+            write_output()
             
             #ser.write(b'S')
         start_time = time.time()
@@ -98,14 +147,28 @@ def speed_test(str):
 
 
 def process_speech(str):
+    global keywords
+    str = str.lower()
+    print("transcription:", str)
+    if "bye" in str:
+        loop.close()
+    for i in range(0, len(keywords)):
+        # print("current keyword: ", keywords[i])
+        if str and str in keywords[i][0].lower():
+            print("before remove keyword", keywords[i])
+            keywords[i][1] = False
+            print("removed keyword", keywords[i])
+            # resp = requests.post(post_kw_url, json= keywords)
+            # print("resp: ", resp.text)
+            output_content[1] = keywords
+            write_output()
+
     str = str.split(' ')
-    print("func print len", len(str))
+    # write_output(keywords)
+
+    return
     
-    if len(str) > 5:
-        str = str[4:]
-    print("func print len after cut", str, len(str))
-    
-cur_time = time.time()
+# cur_time = time.time()
 
 async def send_receive():
    
@@ -164,9 +227,19 @@ async def send_receive():
                    power = []
                             
        send_result, receive_result = await asyncio.gather(send(), receive())
+        # loop
+    #    print("getting loop")
+    #    loop = asyncio.get_running_loop()
     #    print
 
-asyncio.run(send_receive())
+# global loop
+if __name__ == '__main__':
+    retrieve_keywords()
+
+    asyncio.run(send_receive())
+    print("getting loop")
+    # loop = asyncio.get_running_loop()
+
 
 
 

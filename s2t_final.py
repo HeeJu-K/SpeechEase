@@ -17,7 +17,7 @@ print("received keywords visit: ", keywords[0], keywords[1])
 post_kw_url = "http://164.92.178.243:5000/modify"
 
 # speech to text
-auth_key = ''
+auth_key = '92b43f81e45647aa9b3818623299e3df'
 
 FRAMES_PER_BUFFER = 3200
 FORMAT = pyaudio.paInt16
@@ -71,17 +71,7 @@ def process_speech(str):
 
 
     str = str.split(' ')
-    
-    # print("func print len", len(str))
-    # if len(str) > 5:
-    #     for word in str:
-    #         if keywords[i][0] == word:
-    #             keywords.remove[i]
-    #         else:
-    #             print("not detected")
-    #         print ("deleted keyword", keywords)
-    #     str = str[4:]
-    # print("func print len after cut", str, len(str))
+
     return
 
 
