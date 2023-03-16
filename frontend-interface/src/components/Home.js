@@ -183,7 +183,7 @@ function Home() {
     // navigate('/Raspberry');
     axios.post(
       // "http://127.0.0.1:5000/keywords", finalKeywords
-      "http://10.19.0.61:5000/stop",
+      "http://10.19.0.61:5000/shut",
     ).then(
       (response) => {
         console.log("stopping", response);
@@ -248,7 +248,7 @@ function Home() {
         <button onClick={handleAddKw}>Add</button>
         <Slider defaultValue={30} onChange={onChangeSlider} />
         <p>{numKeywords > 50 ? 50 : numKeywords}</p>
-        {/* <button onClick={handleSend}>Send</button> */}
+        <button onClick={handleSend}>Send</button>
         <button onClick={handleStart}>Start</button>
         <button onClick={handleStop}>Stop</button>
       </div>
