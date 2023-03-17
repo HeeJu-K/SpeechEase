@@ -53,7 +53,7 @@ start_time = time.time()
 str_list = []
 
 def write_output():
-    print("heres the output to be writeed::", output_content)
+    # print("heres the output to be writeed::", output_content)
     # print("writing to text file")
     tmp_list = []
     tmp_list.append(str(output_content[0]))
@@ -73,8 +73,8 @@ def retrieve_keywords():
     response = requests.request("GET", fetch_kw_url)
     keywords = response.json()["selectedKeywords"]
     # keywords = keywords.text["selectedKeywords"]
-    print("received keywords: ", keywords)
-    print("received keywords visit: ", keywords[0], keywords[1])
+    # print("received keywords: ", keywords)
+    # print("received keywords visit: ", keywords[0], keywords[1])
     keywords = keywords[1:]
     output_content[1] = keywords
     write_output()
@@ -91,23 +91,24 @@ def volume_test(p, str):
     global output_content
     if str == '':
         return
-    avg_power = sum(power) / len(power)
-    print('Average Power : ', avg_power)
-    if avg_power > 800:
-        print("Too Loud")
-        output_content[0] = 1
-        write_output() 
+    if len(power):
+        avg_power = sum(power) / len(power)
+        # print('Entered Volume test, power:', power, 'Average Power : ', avg_power)
+        if avg_power > 750:
+            # print("Too Loud")
+            output_content[0] = 1
+            write_output() 
+            
+        elif avg_power < 350:
+            # print("Too Quiet")
+            output_content[0] = 2
+            write_output()
+        else:
+            # print("Normal volume")
+            output_content[0] = 0
+            write_output()
         
-    elif avg_power < 250:
-        print("Too Low")
-        output_content[0] = 2
-        write_output()
-    else:
-        print("Normal volume")
-        output_content[0] = 0
-        write_output()
-        
-    print('volume_test')
+    # print('End of volume_test')
 
 def speed_test(str):
     global start_time, str_list
@@ -116,12 +117,12 @@ def speed_test(str):
     str = str.split(' ')
     #print("STR",str,str_list)
     #str_list.extend(str)
-    print(time.time() - start_time)
+    print("current time difference: ", time.time() - start_time)
+    print("current input words: ", str)
     #print("00",str_list)
     if time.time() - start_time > 3: #每隔三秒
         #str_list.extend(str)
         str_list = str
-        print("enter")
         if len(str_list) > 5: #check一下是不是有5个词以上
             print("too fast")
             output_content[0] = 3
@@ -144,22 +145,22 @@ def speed_test(str):
         start_time = time.time()
         str_list = []
         #str_list = []
-        print("11",str_list)
-    print("speed test")
+        # print("11",str_list)
+    print("end of speed test")
 
 
 def process_speech(str):
     global keywords, loop
     str = str.lower()
-    print("transcription:", str)
+    # print("transcription:", str)
     if "bye" in str:
         loop.close()
     for i in range(0, len(keywords)):
         # print("current keyword: ", keywords[i])
         if str and str in keywords[i][0].lower():
-            print("before remove keyword", keywords[i])
+            # print("before remove keyword", keywords[i])
             keywords[i][1] = False
-            print("removed keyword", keywords[i])
+            # print("removed keyword", keywords[i])
             # resp = requests.post(post_kw_url, json= keywords)
             # print("resp: ", resp.text)
             output_content[1] = keywords
@@ -192,7 +193,7 @@ async def send_receive():
             while True:
                 try:
                     data = stream.read(FRAMES_PER_BUFFER, exception_on_overflow = False)
-                   
+                    print("what is data", type(data), len(data))
                     power.append(audioop.rms(data, 2))
                     data = base64.b64encode(data).decode("utf-8")
                     json_data = json.dumps({"audio_data":str(data)})
@@ -222,7 +223,7 @@ async def send_receive():
                     assert False, "Not a websocket 4008 error"
                 process_speech(json.loads(result_str)['text'])
                 speed_test(json.loads(result_str)['text'])   # yuqi speed test
-                print(power)
+                # print(power)
                 if len(power) % 6 == 0:
                    
                     volume_test(power, json.loads(result_str)['text'])
